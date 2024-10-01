@@ -1,0 +1,170 @@
+{% extends "./base.html"%}
+{% block title %} Comprobante {% endblock %}
+{% block body %}
+{% if messages %}
+    {% for message in messages %}
+    <div id="alert-{{ forloop.counter }}"  class="alert alert-primary alert-dismissible fade show" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <strong class="text-dark">{{ message }}</strong>
+    </div>
+    {% endfor %}
+{% endif %}
+<!-- <form action="/registrarTiendas/" method="POST">{% csrf_token %}
+    <div class="form-group p-1">
+        <input type="text" id="txtTienda" name="txtTienda" class="txtTienda" placeholder="Tienda" maxlength="50" required>
+    </div>  
+</form> -->
+
+<!-- Ingresa Datos de la Tabla -->
+<div class="mt-5 container">
+    <h2>Ingresar Datos para la Tabla</h2>
+</div>
+<div class="container mt-5 col-6">
+    <div class="d-flex gap-3">
+        <form action="/guardar_datos/" method="POST" class="d-flex flex-wrap gap-3">
+            {% csrf_token %}
+            <!-- Los campos del formulario, como los has definido antes -->
+            <div class="mb-3 col-3">
+                <label for="tienda" class="form-label">Tienda</label>
+                <input type="text" class="form-control" id="tienda" name="tienda" required>
+            </div>
+            <div class="mb-3 col-3">
+                <label for="wr" class="form-label">WR</label>
+                <input type="text" class="form-control" id="wr" name="wr" required>
+            </div>
+            
+            <div class="mb-3 col-3">
+                <label for="tkr_id" class="form-label">TKR ID</label>
+                <input type="text" class="form-control" id="tkr_id" name="tkr_id" required>
+            </div>
+            
+            <div class="mb-3 col-3">
+                <label for="abono" class="form-label">Abono</label>
+                <input type="number" step="0.01" class="form-control" id="abono" name="abono" required>
+            </div>
+            
+            <div class="mb-3 col-3">
+                <label for="precio" class="form-label">Precio</label>
+                <input type="number" step="0.01" class="form-control" id="precio" name="precio" required>
+            </div>
+            
+            <div class="mb-3 col-3">
+                <label for="subtotal" class="form-label">Subtotal</label>
+                <input type="number" step="0.01" class="form-control" id="subtotal" name="subtotal" required>
+            </div>
+            
+            <div class="mb-3 col-3">
+                <label for="peso" class="form-label">Peso/L</label>
+                <input type="text" class="form-control" id="peso" name="peso" required>
+            </div>
+            
+            <div class="mb-3 col-3">
+                <label for="valor_peso" class="form-label">Valor Peso</label>
+                <input type="number" step="0.01" class="form-control" id="valor_peso" name="valor_peso" required>
+            </div>
+            
+            <div class="mb-3 col-3">
+                <label for="total_peso" class="form-label">Total/Peso</label>
+                <input type="number" step="0.01" class="form-control" id="total_peso" name="total_peso" required>
+            </div>
+            <!-- Más campos aquí -->
+            <button type="submit" class="btn btn-primary col-3">Guardar</button>
+        </form>
+    </div>
+
+        <!-- #Primera Parte del Recibo -->
+    <div class="col-5 mt-5"></div>
+    <form method="POST" action="{% url 'buscarUsuarios' %}">
+        {% csrf_token %}
+        <label for="txtCedula">Ingrese número de cédula:</label>
+        <input type="text" id="txtCedula" name="txtCedula" required>
+        <button type="submit">Buscar</button>
+    </form>
+    </div>
+    <div class="d-flex container mb-3 justify-content-between">
+        <div class=" mt-4 col-5 justify-content-start">
+            <div class="card">
+                <div class="card-header bg-black text-white">
+                    <h5 class="mb-0 ">Detalles del Usuario</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            {{ usuario.nombre }}
+                        </li>
+                        <li class="list-group-item">
+                            {{ usuario.ciudad }}
+                        </li>
+                        <li class="list-group-item">
+                            {{ usuario.email }}
+                        </li>
+                        <li class="list-group-item">
+                            {{ usuario.telefono }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 col-6 justify-content-end">
+            <div class="card">
+                <div class="card-header bg-black text-white ">
+                    <h5 class="text-center">compraenUSAec</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item text-end">
+                            PEDRO MONCAYO 6-54 Y OLMEDO
+                        </li>
+                        <li class="list-group-item text-end">
+                            Ibarra-Imbabura
+                        </li>
+                        <li class="list-group-item text-end">
+                            <strong>Código postal:</strong> 100102
+                        </li>
+                        <li class="list-group-item text-end">
+                            <strong>Teléfono:</strong> (+593) 0969090395
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Tabla para mostrar los datos almacenados -->
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th scope="col">Tienda</th>
+                <th scope="col">WR</th>
+                <th scope="col">TKR ID</th>
+                <th scope="col">Abono</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Subtotal</th>
+                <th scope="col">Peso/L</th>
+                <th scope="col">Valor Peso</th>
+                <th scope="col">Total/Peso</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dato in datos %}
+            <tr>
+                <td>{{ dato.tienda }}</td>
+                <td>{{ dato.wr }}</td>
+                <td>{{ dato.tkr_id }}</td>
+                <td>{{ dato.abono }}</td>
+                <td>{{ dato.precio }}</td>
+                <td>{{ dato.subtotal }}</td>
+                <td>{{ dato.peso }}</td>
+                <td>{{ dato.valor_peso }}</td>
+                <td>{{ dato.total_peso }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+   
+
+
+{% endblock %}

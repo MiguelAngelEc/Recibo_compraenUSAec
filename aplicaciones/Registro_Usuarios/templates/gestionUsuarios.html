@@ -1,0 +1,79 @@
+{% extends "./base.html"%}
+{% block title %} Gestion Usuarios {% endblock %}
+{% block body %}
+<div class="row mt-5">
+    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 mb-4" >
+        <h2>Gestion de Usuarios</h2>
+        <div class="card mt-3">
+            <div class="card-body">
+                <form action="/registrarUsuarios/" method="POST"> {% csrf_token %}
+                    <div class="form-group p-1">
+                        <input type="text" id="txtCedula" name="txtCedula" class="form-control" placeholder="Cedula" minlength="10" maxlength="15" required>
+                    </div>
+                    <div class="form-group p-1">
+                        <input type="text" id="txtNombre" name="txtNombre" class="form-control" placeholder="Nombre" maxlength="50">
+                    </div>
+                    <div class="form-group p-1">
+                        <input type="text" id="txtTelefono" name="txtTelefono" class="form-control" placeholder="Telefono" minlength="10" maxlength="15">
+                    </div>
+                    <div class="form-group p-1">
+                        <input type="text" id="txtDireccion" name="txtDireccion" class="form-control" placeholder="Direccion">
+                    </div>
+                    <div class="form-group p-1">
+                        <input type="text" id="txtCiudad" name="txtCiudad" class="form-control" placeholder="Ciudad">
+                    </div>             
+                    <div class="form-group p-1">
+                        <input type="text" id="txtEmail" name="txtEmail" class="form-control" placeholder="Email" >
+                    </div>
+                    <div class="form-group p-1">
+                        <button type="submit" class="btn btn-dark text-white m-2">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% if messages %}
+        {% for message in messages %}
+        <div id="alert-{{ forloop.counter }}"  class="alert alert-primary alert-dismissible fade show" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <strong class="text-dark">{{ message }}</strong>
+        </div>
+        {% endfor %}
+    {% endif %}
+    <h2>Listado de Usuarios</h2>
+    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 mb-3">
+        <div class="table-responsive mb-3">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Cédula</th>
+                        <th>Nombres y Apellidos</th>
+                        <th>Teléfono</th>
+                        <th>Dirección</th>
+                        <th>Ciudad</th>
+                        <th>email</th>
+                        <th colspan="2">Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in usuarios%}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{c.cedula}}</td>
+                        <td>{{c.nombre}}</td>
+                        <td>{{c.telefono}}</td>
+                        <td>{{c.direccion}}</td>
+                        <td>{{c.ciudad}}</td>
+                        <td>{{c.email}}</td>
+                        <td><a href="edicionUsuarios/{{c.cedula}}" class="btn btn-dark">Editar</a></td>
+                        <td><a href="eliminarUsuarios/{{c.cedula}}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
