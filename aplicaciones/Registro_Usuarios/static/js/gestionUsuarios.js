@@ -43,38 +43,4 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Manejo de la búsqueda de usuarios por cédula usando AJAX
-    const buscarUsuarioForm = document.getElementById('buscar-usuario-form');
-
-    if (buscarUsuarioForm) {
-        buscarUsuarioForm.addEventListener('submit', function(e) {
-            e.preventDefault(); // Evita la recarga de la página
-
-            const cedulaValue = document.getElementById('txtCedula').value;
-            const csrfToken = document.querySelector("input[name='csrfmiddlewaretoken']").value;
-
-            // Verifica que haya una cédula antes de realizar la búsqueda
-            if (cedulaValue) {
-                $.ajax({
-                    url: "{% url 'buscar_usuarios' %}",  // Asegúrate de que este URL sea correcto en Django
-                    type: "POST",
-                    data: {
-                        txtCedula: cedulaValue,  // Valor del campo txtCedula
-                        csrfmiddlewaretoken: csrfToken,  // Token CSRF para seguridad en Django
-                    },
-                    success: function(response) {
-                        // Actualiza el área de resultado con la respuesta del servidor
-                        document.getElementById('resultado-usuario').innerHTML = response;
-                    },
-                    error: function() {
-                        // Muestra un mensaje de error en caso de fallo
-                        document.getElementById('resultado-usuario').innerHTML = '<p style="color:red;">Error al buscar el usuario.</p>';
-                    }
-                });
-            } else {
-                // Si no hay cédula ingresada, muestra un mensaje de error
-                document.getElementById('resultado-usuario').innerHTML = '<p style="color:red;">Por favor, ingrese un número de cédula.</p>';
-            }
-        });
-    }
 });

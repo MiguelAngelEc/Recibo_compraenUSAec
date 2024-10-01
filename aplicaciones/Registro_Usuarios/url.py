@@ -3,19 +3,14 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='gestionUsuarios'),
-    path('facturaUsuarios/', views.facturaUsuarios, name='facturaUsuarios'),
-    #URL para registrar Tiendas
-    path('registrarTiendas/', views.registrarTiendas, name='registrarTiendas'),
-    #URL buscar clientes en Factura
-    path('buscar_usuario/', views.buscarUsuarios, name='buscarUsuarios'),
-    #URL para enviar datos 
-    path('guardar_datos/', views.guardar_datos, name='guardar_datos'),
-    #URL para agregar usuarios
+    # URL para editar usuarios
+    path('edicionUsuarios/<codigo>/', views.edicionUsuarios, name='edicionUsuarios'),
+    # Agrega la URL para registrar usuarios
     path('registrarUsuarios/', views.registrarUsuarios),
-    #URL para editar cursos
-    path('edicionUsuarios/<codigo>', views.edicionUsuarios),
-    #URL que muestra editarUsuarios.html
-    path('editarUsuarios/', views.editarUsuarios),
-    #URL para eliminar usuaiors
-    path('eliminarUsuarios/<codigo>', views.eliminarUsuarios)
+    # URL que muestra editarUsuarios.html
+    path('editarUsuarios/', views.editarUsuarios, name='editarUsuarios'),
+    # URL para eliminar usuarios
+    path('eliminarUsuarios/<codigo>/', views.eliminarUsuarios, name='eliminarUsuarios'),
+    # URL para factura de usuarios
+    path('facturaUsuarios/', views.facturaUsuarios, name='facturaUsuarios'),
 ]
