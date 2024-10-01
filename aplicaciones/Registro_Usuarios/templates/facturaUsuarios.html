@@ -1,0 +1,52 @@
+{% extends "./base.html"%}
+{% block title %} Gestion Usuarios {% endblock %}
+{% block body %}
+<h1>Buscar Usuario por Cédula</h1>
+
+<!-- Formulario para buscar usuario por cédula -->
+
+
+<div class="container">
+    <div class="col-5 mb-2">
+        <form class="form-control col-1" method="POST">
+            {% csrf_token %}
+            <label for="cedula">Ingrese el número de cédula:</label>
+            <input type="text" id="cedula" name="cedula" required>
+            <button type="submit">Buscar</button>
+        </form>
+    </div>
+ 
+    
+    <!-- Tabla que mostrará los datos del usuario encontrado -->
+    <div class="border col-5">
+        <div class=" p-1 bg-black text-white">
+            <h5 >Clientes</h5>
+        </div>
+
+        
+        <table>
+            <tbody>
+                {% if usuarios %}
+                    {% for usuario in usuarios %}
+                    <tr class="row p-1">
+                        <td>{{ usuario.nombre }}</td>
+                        <td>{{ usuario.ciudad }}</td>
+                        <td>{{ usuario.email }}</td>
+                        <td>{{ usuario.telefono }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4">No se encontraron usuarios con esta cédula</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    
+    
+</div>
+
+
+
+{% endblock %}
