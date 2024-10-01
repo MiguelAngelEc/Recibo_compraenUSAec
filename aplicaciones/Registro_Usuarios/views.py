@@ -67,9 +67,10 @@ def eliminarUsuarios(request, codigo):
 
 #Parte de Factura
 def facturaUsuarios(request):
+    usuario = None
     if request.method == 'POST':
         # Obtener la cédula ingresada en el formulario
-        cedula = request.POST.get('cedula', None)
+        cedula = request.POST.get('cedula')
 
         # Verificar si se ingresó una cédula y buscar en la base de datos
         if cedula:
@@ -80,4 +81,6 @@ def facturaUsuarios(request):
         usuarios = Usuarios.objects.none()  # Si no es POST, no mostrar usuarios
 
     return render(request, 'facturaUsuarios.html', {'usuarios': usuarios})   
+
+
 

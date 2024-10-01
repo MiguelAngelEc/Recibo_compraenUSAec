@@ -18,31 +18,47 @@
  
     
     <!-- Tabla que mostrará los datos del usuario encontrado -->
-    <div class="border col-5">
-        <div class=" p-1 bg-black text-white">
-            <h5 >Clientes</h5>
+    <div class="container d-flex justify-content-between col-12">
+        <div class="border col-5">
+            <div class=" p-1 bg-black text-white">
+                <h5 >Clientes</h5>
+            </div>
+            <table>
+                <tbody>
+                    {% if usuarios %}
+                        {% for usuario in usuarios %}
+                        <tr class="row p-1">
+                            <td>{{ usuario.nombre }}</td>
+                            <td>{{ usuario.ciudad }}</td>
+                            <td>{{ usuario.email }}</td>
+                            <td>{{ usuario.telefono }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4">No se encontraron usuarios con esta cédula</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
         </div>
-
-        
-        <table>
-            <tbody>
-                {% if usuarios %}
-                    {% for usuario in usuarios %}
-                    <tr class="row p-1">
-                        <td>{{ usuario.nombre }}</td>
-                        <td>{{ usuario.ciudad }}</td>
-                        <td>{{ usuario.email }}</td>
-                        <td>{{ usuario.telefono }}</td>
+        <div class="border col-5"> 
+            <div class=" p-1 bg-black  text-white">
+                <h5 >CompraenUSAec</h5>
+            </div>
+            <table>
+                <tbody>
+                    <tr class="row text-end p-1">
+                        <td> PEDRO MONCAYO 6-54 Y OLMEDO</td>
+                        <td>Ibarra-Imbabura</td>
+                        <td><strong>Código postal:</strong>  100102</td>
+                        <td><strong> Teléfono: </strong> (+593) 0969090395</td>
                     </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="4">No se encontraron usuarios con esta cédula</td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
+    
     
     
 </div>
