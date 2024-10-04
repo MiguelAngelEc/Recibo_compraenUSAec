@@ -13,6 +13,8 @@ urlpatterns = [
     path('eliminarUsuarios/<codigo>/', views.eliminarUsuarios, name='eliminarUsuarios'),
     # URL para factura de usuarios
     path('facturaUsuarios/', views.facturaUsuarios, name='facturaUsuarios'),
-    #Crea vista de Busqueda de Usuario
+    #Elimina los valores de la Factura
+    path('eliminar-todos/', views.eliminar_todos_los_registros, name='eliminar_todos_los_registros'),
+
   
 ]

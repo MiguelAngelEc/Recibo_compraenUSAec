@@ -29,18 +29,4 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Selecciona el campo de entrada y el formulario solo si existen
-    const inputField = document.getElementById('txtTienda');
-    const form = document.getElementById('tiendaForm');
-
-    if (inputField && form) {
-        // Añade un evento al presionar "Enter" en el campo de entrada
-        inputField.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault(); // Evita el comportamiento predeterminado
-                form.submit(); // Envía el formulario
-            }
-        });
-    }
-
 });

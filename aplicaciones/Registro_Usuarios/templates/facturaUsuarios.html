@@ -1,23 +1,64 @@
 {% extends "./base.html"%}
 {% block title %} Gestion Usuarios {% endblock %}
 {% block body %}
-<h1>Buscar Usuario por Cédula</h1>
+
+
+<!-- Formulario para Ingresar los valores -->
+<div class="container mt-3">
+    <h3 class="text-center">Formulario Tienda WR TKR ID</h3>
+    {% if form %}
+    <p>El formulario se está cargando correctamente.</p>
+    {% else %}
+    <p>Error: No se está cargando el formulario.</p>
+    {% endif %}
+    <div class="d-flex justify-content-center">
+        <form method="POST" class="w-100">
+            {% csrf_token %}
+            <div class="row">
+                {% for field in form %}
+                    <div class="col-md-3 mb-3"> <!-- Cambia a col-md-3 para 4 columnas -->
+                        <div class="form-group">
+                            {{ field.label }} <!-- Muestra la etiqueta del campo -->
+                            {{ field }} <!-- Muestra el campo del formulario -->
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small> <!-- Texto de ayuda -->
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-3">
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary" name="submit_tienda" value="submit_tienda">Enviar</button>
+                </form>
+            </div>
+            
+            <!-- Formulario para eliminar todos los registros -->
+            <div class="text-center mt-3">
+                <form method="POST" action="{% url 'eliminar_todos_los_registros' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" name="submit_eliminar_todos" value="submit_eliminar_todos">Eliminar Registros</button>
+                    <a href="{% url 'facturaUsuarios' %}"></a>
+                </form>
+            </div>
+        </form>
+    </div>
+    
+</div>
 
 <!-- Formulario para buscar usuario por cédula -->
-
-
 <div class="container">
     <div class="col-5 mb-2">
         <form class="form-control col-1" method="POST">
             {% csrf_token %}
             <label for="cedula">Ingrese el número de cédula:</label>
             <input type="text" id="cedula" name="cedula" required>
-            <button type="submit">Buscar</button>
+            <button type="submit" name="submit_buscar" value="submit_buscar">Buscar</button>
         </form>
     </div>
- 
-    
-    <!-- Tabla que mostrará los datos del usuario encontrado -->
+
+<!-- Tabla que mostrará los datos del usuario encontrado -->
     <div class="container d-flex justify-content-between col-12">
         <div class="border col-5">
             <div class=" p-1 bg-black text-white">
@@ -63,6 +104,95 @@
     
 </div>
 
-
+<!-- Tabla que muestra los valoares  -->
+<div class="container mt-5">
+    <h3 class="text-center">Valores Tienda WR TKR ID</h3>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Tienda</th>
+                <th scope="col">WR</th>
+                <th scope="col">TKR</th>
+                <th scope="col">Abono</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Subtotal</th>
+                <th scope="col">Peso (l)</th>
+                <th scope="col">Valor/Peso</th>
+                <th scope="col">Total/Peso</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tienda in tiendas %}
+            <tr>
+                <td>{{ tienda.titulo }}</td>
+                <td>{{ tienda.wr }}</td>
+                <td>{{ tienda.tkr }}</td>
+                <td>{{ tienda.abono }}</td>
+                <td>{{ tienda.precio }}</td>
+                <td>{{ tienda.subtotal }}</td>
+                <td>{{ tienda.peso_l }}</td>
+                <td>{{ tienda.valor_peso }}</td>
+                <td>{{ tienda.total_peso }}</td>
+            </tr>
+            {% endfor %}
+            <div class="d-flex justify-content-end">
+                <table class="table">
+                    <tr>
+                        <td class="text-end"><strong>Total SubTotal</strong></td>
+                        <td class="text-end">{{ total_general_subtotal }}</td> <!-- Clase para alinear a la derecha -->
+                    </tr>
+                    <tr>
+                        <td class="text-end"><strong>Total Peso</strong></td>
+                        <td class="text-end">{{ total_general_peso }}</td> <!-- Clase para alinear a la derecha -->
+                    </tr>
+                    <tr>
+                </table>
+            </div>
+        </tbody>
+      </table>
+    </div>
+    <div class="container mt-5">
+        <h1 class="text-center">Detalle de Factura</h1>
+    
+        <!-- Detalle de los valores -->
+        <table class="table table-bordered mt-4">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">Descripción</th>
+                    <th scope="col">Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+               
+                <tr>
+                    <td>Suma Total (Subtotal + Peso)</td>
+                    <td>{{ total_suma }}</td>
+                </tr>
+                <tr>
+                    <td>Flete</td>
+                    <td class="right-aligned input-container">
+                        <input type="number" class="form-control" name="flete" placeholder="Ingrese Flete" step="0.01">
+                    </td>
+                </tr>
+                <tr>
+                    <td>ISD</td>
+                    <td class="right-aligned input-container">
+                        <input type="number" class="form-control" name="isd" placeholder="Ingrese ISD" step="0.01">
+                    </td>
+                </tr>
+                <tr class="table-info">
+                    <td><strong>Total a Pagar</strong></td>
+                    <td><strong>{{ total_final }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    
+        <!-- Botón de acción -->
+        <div class="text-center mt-4">
+            <button class="btn btn-primary">Realizar Pago</button>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
