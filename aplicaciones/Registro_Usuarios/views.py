@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 import logging
 from .models import Usuarios, DatosTabla 
 from .forms import TiendaForm
@@ -73,7 +73,7 @@ def eliminarUsuarios(request, codigo):
     return redirect('/')
 
 #Parte de Factura
-# #Busca con numero de cedula 
+#Busca con numero de cedula 
 # def facturaUsuarios(request):
 #     usuarios = None
 #     if request.method == 'POST':
@@ -93,77 +93,62 @@ def eliminarUsuarios(request, codigo):
 #Parte para el Valor de las Facturas
 #Tabla para mostrar los valores
 def facturaUsuarios(request):
-    usuarios = None
-    form = TiendaForm()  # Asegurar que form siempre tenga un valor por defecto
-    tiendas = DatosTabla.objects.all()  # Obtener todos los registros de DatosTabla
+    
+    usuarios = None  # Cambio de nombre para no sobrescribir el modelo
+    form = TiendaForm()
+    tiendas = DatosTabla.objects.all()
 
-    # Si el campo es vacío, coloca 'S/D'
+    total_general_peso = Decimal('0.0')
+    total_flete = Decimal('0.0')
+    total_isd = Decimal('0.0')
+    total_final = Decimal('0.0')
+
+    # Calcular los totales
     for tienda in tiendas:
         tienda.titulo = tienda.titulo if tienda.titulo else 'S/D'
         tienda.wr = tienda.wr if tienda.wr else 'S/D'
-        tienda.tkr = tienda.tkr if tienda.tkr else 'S/D'
-        tienda.abono = tienda.abono if tienda.abono is not None else Decimal('0.0')
-        tienda.precio = tienda.precio if tienda.precio is not None else Decimal('0.0')
-        tienda.subtotal = tienda.subtotal if tienda.subtotal is not None else Decimal('0.0')
         tienda.peso_l = tienda.peso_l if tienda.peso_l is not None else Decimal('0.0')
         tienda.valor_peso = tienda.valor_peso if tienda.valor_peso is not None else Decimal('0.0')
         tienda.total_peso = tienda.total_peso if tienda.total_peso is not None else Decimal('0.0')
 
-    # Sumar subtotales y total_peso de todas las filas
-    total_general_subtotal = sum(tienda.subtotal for tienda in tiendas)
-    total_general_peso = sum(tienda.total_peso for tienda in tiendas)
-    total_suma = total_general_subtotal + total_general_peso  # Suma total
+        total_general_peso += tienda.total_peso
+        total_flete += tienda.flete if tienda.flete else Decimal('0.0')
+        total_isd += tienda.ISD if tienda.ISD else Decimal('0.0')
 
-    total_final = total_suma  # Inicializa el total final
+    # Calcular el total final
+    total_final = total_general_peso + total_flete + total_isd
 
     if request.method == 'POST':
+        # Si se envía el formulario para guardar una tienda
         if 'submit_tienda' in request.POST:
-            # Procesar el formulario TiendaForm
             form = TiendaForm(request.POST)
             if form.is_valid():
                 form.save()
-                tiendas = DatosTabla.objects.all()
-                total_general_subtotal = sum(tienda.subtotal for tienda in tiendas)
-                total_general_peso = sum(tienda.total_peso for tienda in tiendas)
-                total_suma = total_general_subtotal + total_general_peso
+                return redirect('facturaUsuarios')
 
+        # Si se busca un usuario por cédula
         elif 'submit_buscar' in request.POST:
-            # Procesar el formulario de búsqueda de cédula
+    # Procesar el formulario de búsqueda de cédula
             cedula = request.POST.get('cedula')
             if cedula:
                 usuarios = Usuarios.objects.filter(cedula=cedula)
             else:
-                usuarios = Usuarios.objects.none()  # No mostrar nada si no hay cédula
+                usuarios = Usuarios.objects.none()
 
+        # Si se elimina todo el contenido de la tabla
         elif 'submit_eliminar_todos' in request.POST:
-            # Procesar el formulario para eliminar todos los registros
             DatosTabla.objects.all().delete()
 
-        # Obtener valores de Flete e ISD del formulario
-        flete = request.POST.get('flete', 0)  # Valor por defecto 0 si no existe
-        isd = request.POST.get('isd', 0)      # Valor por defecto 0 si no existe
-
-        try:
-            # Convertir a Decimal y calcular total final
-            flete = Decimal(flete) if flete else Decimal('0.0')
-            isd = Decimal(isd) if isd else Decimal('0.0')
-        except (ValueError, InvalidOperation):
-            flete = Decimal('0.0')
-            isd = Decimal('0.0')
-
-        total_final = total_suma + flete + isd  # Calcular total final
-
-    # Renderiza la plantilla con los usuarios, el formulario y los datos de la tabla
+    # Renderizamos la plantilla con los datos necesarios
     return render(request, 'facturaUsuarios.html', {
         'form': form,
-        'usuarios': usuarios,
         'tiendas': tiendas,
-        'total_general_subtotal': total_general_subtotal,
         'total_general_peso': total_general_peso,
-        'total_suma': total_suma,
-        'total_final': total_final  # Pasar total final al contexto
+        'total_flete': total_flete,
+        'total_isd': total_isd,
+        'total_final': total_final,  # Total final
+        'usuario_resultado': usuarios  # Pasamos la variable al contexto
     })
-
 
 #funcion que elimina los valores
 def eliminar_todos_los_registros(request):
