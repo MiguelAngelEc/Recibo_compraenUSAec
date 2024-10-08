@@ -3,6 +3,8 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='gestionUsuarios'),
+    #URL de Imprimir
+    path('reciboImprimir/', views.reciboImprimir, name='reciboImprimir'),
     # URL para editar usuarios
     path('edicionUsuarios/<codigo>/', views.edicionUsuarios, name='edicionUsuarios'),
     # Agrega la URL para registrar usuarios
@@ -16,5 +18,8 @@ urlpatterns = [
     #Elimina los valores de la Factura
     path('eliminar-todos/', views.eliminar_todos_los_registros, name='eliminar_todos_los_registros'),
 
-  
+    #Generar PDF
+    path('factura/pdf/', views.factura_pdf, name='factura_pdf'),
+
+   
 ]

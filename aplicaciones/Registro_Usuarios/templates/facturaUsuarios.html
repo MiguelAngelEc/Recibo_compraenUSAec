@@ -3,8 +3,8 @@
 {% block body %}
 
 <!-- Formulario para Ingresar los valores -->
-<div class="container mt-3">
-    <h3 class="text-center">Formulario Tienda WR TKR ID</h3>
+<div class="recibo-container">
+    <h3 class="text-center">RECIBO</h3>
     {% if form %}
     <p>El formulario se está cargando correctamente.</p>
     {% else %}
@@ -39,114 +39,31 @@
         <form method="POST" action="{% url 'eliminar_todos_los_registros' %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger" name="submit_eliminar_todos" value="submit_eliminar_todos">Limpiar Registros</button>
-            <a href="{% url 'facturaUsuarios' %}"></a>
+            <a href="{% url 'facturaUsuarios' %}"></a>            
+        </form>
+        <form method="POST" action="{% url 'factura_pdf' %}" target="_blank">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary" name="generar_pdf" value="submit_generar_pdf">Generar PDF</button>
         </form>
     </div>
+    <div class="recibo-container">
+        <div class="col-5 mb-3">
+            <form class="form-control col-2" method="POST">
+                {% csrf_token %}
+                <label for="cedula">Ingrese el número de cédula:</label>
+                <input type="text" id="cedula" name="cedula" required>
+                <button type="submit" class="btn bg-black text-white" name="submit_buscar" value="submit_buscar">Buscar</button>
+            </form>
+        </div>
+        
+    
+    <div class="recibo-container">
+        {% include 'reciboImprimir.html' %}
+    </div>
 </div>
+
 
 <!-- Formulario para buscar usuario por cédula -->
-<div class="container">
-    <div class="col-5 mb-2">
-        <form class="form-control col-1" method="POST">
-            {% csrf_token %}
-            <label for="cedula">Ingrese el número de cédula:</label>
-            <input class="form-control" type="text" id="cedula" name="cedula" required>
-            <button type="submit" class="btn bg-black text-white" name="submit_buscar" value="submit_buscar">Buscar</button>
-        </form>
-    </div>
-<!-- Tabla que mostrará los datos del usuario encontrado -->
-    <div class="container d-flex justify-content-between col-12">
-        <div class="border col-5">
-            <div class=" p-1 bg-black text-white">
-                <h5 >Clientes</h5>
-            </div>
-            <table>
-                <tbody>
-                    {% if usuario_resultado %}
-                        {% for usuario in usuario_resultado %}
-                        <tr class="row p-1">
-                            <td>{{ usuario.nombre }}</td>
-                            <td>{{ usuario.ciudad }}</td>
-                            <td>{{ usuario.email }}</td>
-                            <td>{{ usuario.telefono }}</td>
-                        </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="4">No se encontraron usuarios con esta cédula</td>
-                        </tr>
-                    {% endif %}
-                </tbody>
-            </table>
-        </div>
-        <div class="border col-5"> 
-            <div class=" p-1 bg-black  text-white">
-                <h5 >CompraenUSAec</h5>
-            </div>
-            <table>
-                <tbody>
-                    <tr id="AQUI" class="row text-end p-1">
-                        <td> PEDRO MONCAYO 6-54 Y OLMEDO</td>
-                        <td>Ibarra-Imbabura</td>
-                        <td><strong>Código postal:</strong>  100102</td>
-                        <td><strong> Teléfono: </strong> (+593) 0969090395</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    
-    
-    
-</div>
 
-<!-- Tabla que muestra los valoares  -->
-<div class="container mt-5">
-    <h3 class="text-center">Valores Tienda WR TKR ID</h3>
-    <div class="table-responsive">
-      <table class="table table-bordered">
-        <thead class="table-dark">
-            <tr>
-                <th scope="col">Tienda</th>
-                <th scope="col">WR</th>
-                <th scope="col">TKR</th>
-                <th scope="col">Peso (l)</th>
-                <th scope="col">Valor/Peso</th>
-                <th scope="col">Total/Peso</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for tienda in tiendas %}
-            <tr>
-                <td>{{ tienda.titulo }}</td>
-                <td>{{ tienda.wr }}</td>
-                <td>{{ tienda.tkr }}</td>
-                <td>{{ tienda.peso_l }}</td>
-                <td>{{ tienda.valor_peso }}</td>
-                <td><strong>{{ tienda.total_peso }}</strong></td>
-            </tr>
-            {% endfor %}
-            <table class="d-flex justify-content-end p-4">
-                <tr class="border-bottom">
-                    <td><strong>Total Peso:</strong></td>
-                    <td class="text-end p-2">{{ total_general_peso }}</td> <!-- Clase para alinear a la derecha -->
-                </tr>
-                <tr class="border-bottom">
-                    <td><strong>Flete:</strong></td>
-                    <td class="text-end p-2">{{ total_flete }}</td>
-                </tr>
-                <tr class="border-bottom">
-                    <td><strong>ISD:</strong></td>
-                    <td class="text-end p-2">{{ total_isd }}</td>
-                </tr>
-                <tr class="border-bottom">
-                    <td><strong>Total a Pagar:</strong></td>
-                    <td class="text-end p-2">{{ total_final }}</td>
-                </tr>
-            </table>
-        </tbody>
-      </table>
-    </div>
-</div>
 
 {% endblock %}

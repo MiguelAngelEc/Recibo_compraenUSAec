@@ -3,3 +3,8 @@ img{
     width: 50px;
 }
 
+.recibo-container {
+    display: block; /* o simplemente no poner display para usar el comportamiento predeterminado */
+    margin: 0 auto; /* Centra el contenido si es necesario */
+    padding: 20px; /* Ajusta el espacio alrededor del contenido */
+}

@@ -1,9 +1,15 @@
 from django.shortcuts import render, redirect
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 import logging
 from .models import Usuarios, DatosTabla 
 from .forms import TiendaForm
 from django.contrib import messages
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from weasyprint import HTML
+from io import BytesIO
+from django.templatetags.static import static
+
 
 
 
@@ -13,6 +19,9 @@ logger = logging.getLogger(__name__)
 def home(request):
     usuariosListados = Usuarios.objects.all()
     return render(request, "gestionUsuarios.html", {"usuarios": usuariosListados}) 
+
+def reciboImprimir(request):
+    return render(request, 'reciboImprimir.html')
 
 #Funcion que permite Agregrar Usuarios
 def registrarUsuarios(request):
@@ -72,32 +81,14 @@ def eliminarUsuarios(request, codigo):
     messages.success(request, 'Usuario Eliminado!!')
     return redirect('/')
 
-#Parte de Factura
-#Busca con numero de cedula 
-# def facturaUsuarios(request):
-#     usuarios = None
-#     if request.method == 'POST':
-#         # Obtener la cédula ingresada en el formulario
-#         cedula = request.POST.get('cedula')
-
-#         # Verificar si se ingresó una cédula y buscar en la base de datos
-#         if cedula:
-#             usuarios = Usuarios.objects.filter(cedula=cedula)
-#         else:
-#             usuarios = Usuarios.objects.none()  # No mostrar nada si no hay cédula
-#     else:
-#         usuarios = Usuarios.objects.none()  # Si no es POST, no mostrar usuarios
-
-#     return render(request, 'facturaUsuarios.html', {'usuarios': usuarios})   
-
 #Parte para el Valor de las Facturas
 #Tabla para mostrar los valores
 def facturaUsuarios(request):
-    
-    usuarios = None  # Cambio de nombre para no sobrescribir el modelo
+    usuarios = None  # Cambiar el nombre para no sobrescribir el modelo
     form = TiendaForm()
     tiendas = DatosTabla.objects.all()
 
+    # Inicializar los totales
     total_general_peso = Decimal('0.0')
     total_flete = Decimal('0.0')
     total_isd = Decimal('0.0')
@@ -128,7 +119,6 @@ def facturaUsuarios(request):
 
         # Si se busca un usuario por cédula
         elif 'submit_buscar' in request.POST:
-    # Procesar el formulario de búsqueda de cédula
             cedula = request.POST.get('cedula')
             if cedula:
                 usuarios = Usuarios.objects.filter(cedula=cedula)
@@ -137,17 +127,17 @@ def facturaUsuarios(request):
 
         # Si se elimina todo el contenido de la tabla
         elif 'submit_eliminar_todos' in request.POST:
-            DatosTabla.objects.all().delete()
-
-    # Renderizamos la plantilla con los datos necesarios
+            DatosTabla.objects.all().delete() 
+    
+     # Renderizar la plantilla con los datos necesarios
     return render(request, 'facturaUsuarios.html', {
         'form': form,
         'tiendas': tiendas,
         'total_general_peso': total_general_peso,
         'total_flete': total_flete,
         'total_isd': total_isd,
-        'total_final': total_final,  # Total final
-        'usuario_resultado': usuarios  # Pasamos la variable al contexto
+        'total_final': total_final,
+        'usuario_resultado': usuarios
     })
 
 #funcion que elimina los valores
@@ -157,6 +147,58 @@ def eliminar_todos_los_registros(request):
         DatosTabla.objects.all().delete()
         # Redirigir a otra vista (puedes cambiar la URL a donde desees)
         return redirect('facturaUsuarios')
+
+# Función para generar vista para PDF
+def factura_pdf(request):
+    tiendas = DatosTabla.objects.all()
+
+    # Inicializar los totales
+    total_general_peso = Decimal('0.0')
+    total_flete = Decimal('0.0')
+    total_isd = Decimal('0.0')
+    total_final = Decimal('0.0')
+
+    # Calcular los totales
+    for tienda in tiendas:
+        tienda.titulo = tienda.titulo if tienda.titulo else 'S/D'
+        tienda.wr = tienda.wr if tienda.wr else 'S/D'
+        tienda.peso_l = tienda.peso_l if tienda.peso_l is not None else Decimal('0.0')
+        tienda.valor_peso = tienda.valor_peso if tienda.valor_peso is not None else Decimal('0.0')
+        tienda.total_peso = tienda.total_peso if tienda.total_peso is not None else Decimal('0.0')
+
+        total_general_peso += tienda.total_peso
+        total_flete += tienda.flete if tienda.flete else Decimal('0.0')
+        total_isd += tienda.ISD if tienda.ISD else Decimal('0.0')
+
+    # Calcular el total final
+    total_final = total_general_peso + total_flete + total_isd
+
+    # Renderizar la plantilla como HTML
+    html_string = render_to_string('reciboImprimir.html', {
+        'tiendas': tiendas,
+        'total_general_peso': total_general_peso,
+        'total_flete': total_flete,
+        'total_isd': total_isd,
+        'total_final': total_final
+    })
+
+    # Crear un objeto de BytesIO
+    pdf_file = BytesIO()
+    
+    # Generar la ruta del archivo CSS
+    css_path = static('css/recibo.css')
+
+    # Convertir el HTML a PDF
+    HTML(string=html_string).write_pdf(pdf_file)
+   
+    # Devolver el PDF como respuesta HTTP
+    pdf_file.seek(0)
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="factura.pdf"'
+
+    return response
+
+
 
     
 
