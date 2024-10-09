@@ -41,22 +41,31 @@
             <button type="submit" class="btn btn-danger" name="submit_eliminar_todos" value="submit_eliminar_todos">Limpiar Registros</button>
             <a href="{% url 'facturaUsuarios' %}"></a>            
         </form>
+        <!-- Formulario para generar PDF -->
+        {% if usuario_resultado %}
         <form method="POST" action="{% url 'factura_pdf' %}" target="_blank">
             {% csrf_token %}
-            <button type="submit" class="btn btn-primary" name="generar_pdf" value="submit_generar_pdf">Generar PDF</button>
+            <input type="hidden" name="cedula" value="{{ usuario_resultado.cedula }}">
+            <button type="submit" class="btn btn-primary" name="generar_pdf" value="{{ usuario_resultado.cedula }}">Generar PDF</button>
         </form>
+        {% endif %}
+        
     </div>
+    <form class="form-control col-2" method="POST" action="{% url 'factura_pdf' %}">
+        {% csrf_token %}
+        <input type="hidden" id="cedula" name="cedula" value="{{ request.POST.cedula|default:'' }}">
+        <button type="submit" class="btn bg-black text-white">Buscar y Generar PDF</button>
+    </form>
     <div class="recibo-container">
         <div class="col-5 mb-3">
-            <form class="form-control col-2" method="POST">
+            <form class="form-control col-2" method="POST" action="{% url 'facturaUsuarios' %}">
                 {% csrf_token %}
                 <label for="cedula">Ingrese el número de cédula:</label>
-                <input type="text" id="cedula" name="cedula" required>
+                <input type="text" id="cedula" name="cedula" value="{{ request.POST.cedula|default:'' }}" required>
                 <button type="submit" class="btn bg-black text-white" name="submit_buscar" value="submit_buscar">Buscar</button>
             </form>
         </div>
-        
-    
+    </div>
     <div class="recibo-container">
         {% include 'reciboImprimir.html' %}
     </div>

@@ -8,7 +8,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 from weasyprint import HTML
 from io import BytesIO
-from django.templatetags.static import static
+from django.template import loader
 
 
 
@@ -118,17 +118,23 @@ def facturaUsuarios(request):
                 return redirect('facturaUsuarios')
 
         # Si se busca un usuario por cédula
-        elif 'submit_buscar' in request.POST:
-            cedula = request.POST.get('cedula')
-            if cedula:
-                usuarios = Usuarios.objects.filter(cedula=cedula)
-            else:
-                usuarios = Usuarios.objects.none()
+    cedula = request.POST.get('cedula', '').strip()
 
-        # Si se elimina todo el contenido de la tabla
-        elif 'submit_eliminar_todos' in request.POST:
-            DatosTabla.objects.all().delete() 
-    
+    if cedula and len(cedula) == 10 and cedula.isdigit():
+        try:
+            # Devuelve un único usuario
+            usuario = Usuarios.objects.get(cedula=cedula)
+            # Convertirlo en una lista para que funcione con el HTML de la misma manera
+            usuario_resultado = [usuario]  # Lista de un solo elemento
+        except Usuarios.DoesNotExist:
+            usuario_resultado = []  # Lista vacía si no se encuentra
+            messages.error(request, "No se encontró ningún usuario con esa cédula.")
+    else:
+        usuario_resultado = []
+        messages.error(request, "La cédula ingresada no es válida.")
+
+
+            
      # Renderizar la plantilla con los datos necesarios
     return render(request, 'facturaUsuarios.html', {
         'form': form,
@@ -137,7 +143,7 @@ def facturaUsuarios(request):
         'total_flete': total_flete,
         'total_isd': total_isd,
         'total_final': total_final,
-        'usuario_resultado': usuarios
+        'usuario_resultado': usuario_resultado
     })
 
 #funcion que elimina los valores
@@ -172,31 +178,47 @@ def factura_pdf(request):
 
     # Calcular el total final
     total_final = total_general_peso + total_flete + total_isd
-
-    # Renderizar la plantilla como HTML
-    html_string = render_to_string('reciboImprimir.html', {
-        'tiendas': tiendas,
-        'total_general_peso': total_general_peso,
-        'total_flete': total_flete,
-        'total_isd': total_isd,
-        'total_final': total_final
-    })
-
-    # Crear un objeto de BytesIO
-    pdf_file = BytesIO()
     
-    # Generar la ruta del archivo CSS
-    css_path = static('css/recibo.css')
+    # Inicializa los datos necesarios
+    cedula = request.POST.get('cedula', '').strip()
 
-    # Convertir el HTML a PDF
-    HTML(string=html_string).write_pdf(pdf_file)
-   
-    # Devolver el PDF como respuesta HTTP
-    pdf_file.seek(0)
-    response = HttpResponse(pdf_file, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="factura.pdf"'
+    if cedula and len(cedula) == 10 and cedula.isdigit():
+            try:
+                usuario = Usuarios.objects.get(cedula=cedula)
+                usuario_resultado = [usuario]  # Convertir en lista de un solo elemento
+            except Usuarios.DoesNotExist:
+                usuario_resultado = []
+                messages.error(request, "No se encontró ningún usuario con esa cédula.")
+    else:
+            usuario_resultado = []
+            messages.error(request, "La cédula ingresada no es válida.")
 
-    return response
+    if usuario_resultado:
+        
+        # Renderizar la plantilla como HTML
+        html_string = render_to_string('reciboImprimir.html', {
+            'usuario_resultado': usuario_resultado,
+            'tiendas': tiendas,
+            'total_general_peso': total_general_peso,
+            'total_flete': total_flete,
+            'total_isd': total_isd,
+            'total_final': total_final,
+        })
+
+        # Crear un objeto de BytesIO
+        pdf_file = BytesIO()
+
+        # Convertir el HTML a PDF
+        HTML(string=html_string).write_pdf(pdf_file)
+
+        # Devolver el PDF como respuesta HTTP
+        pdf_file.seek(0)
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = 'inline; filename="factura.pdf"'
+
+        return response
+    else:
+        return HttpResponse("No se encontró el usuario con la cédula proporcionada.", status=404)
 
 
 
