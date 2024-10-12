@@ -8,7 +8,10 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 from weasyprint import HTML
 from io import BytesIO
-from django.template import loader
+from datetime import datetime
+import os
+from django.conf import settings
+from django.templatetags.static import static
 
 
 
@@ -21,7 +24,13 @@ def home(request):
     return render(request, "gestionUsuarios.html", {"usuarios": usuariosListados}) 
 
 def reciboImprimir(request):
-    return render(request, 'reciboImprimir.html')
+    fecha_emision = datetime.now().strftime('%Y-%m-%d')  # o el formato de fecha que prefieras
+    
+    contexto = {
+        'fecha_emision': fecha_emision,
+        # Otras variables que necesitas pasar
+    }
+    return render(request, 'reciboImprimir.html', contexto)
 
 #Funcion que permite Agregrar Usuarios
 def registrarUsuarios(request):
@@ -84,7 +93,6 @@ def eliminarUsuarios(request, codigo):
 #Parte para el Valor de las Facturas
 #Tabla para mostrar los valores
 def facturaUsuarios(request):
-    usuarios = None  # Cambiar el nombre para no sobrescribir el modelo
     form = TiendaForm()
     tiendas = DatosTabla.objects.all()
 
@@ -131,10 +139,10 @@ def facturaUsuarios(request):
             messages.error(request, "No se encontró ningún usuario con esa cédula.")
     else:
         usuario_resultado = []
-        messages.error(request, "La cédula ingresada no es válida.")
+        # messages.error(request, "La cédula ingresada no es válida.")
 
-
-            
+    fecha_emision = datetime.now().strftime('%d/%m/%Y')  # o el formato de fecha que prefieras
+               
      # Renderizar la plantilla con los datos necesarios
     return render(request, 'facturaUsuarios.html', {
         'form': form,
@@ -143,7 +151,8 @@ def facturaUsuarios(request):
         'total_flete': total_flete,
         'total_isd': total_isd,
         'total_final': total_final,
-        'usuario_resultado': usuario_resultado
+        'usuario_resultado': usuario_resultado,
+        'fecha_emision': fecha_emision,
     })
 
 #funcion que elimina los valores
@@ -179,6 +188,9 @@ def factura_pdf(request):
     # Calcular el total final
     total_final = total_general_peso + total_flete + total_isd
     
+    # Genera la ruta absoluta de la imagen
+    
+    
     # Inicializa los datos necesarios
     cedula = request.POST.get('cedula', '').strip()
 
@@ -188,21 +200,32 @@ def factura_pdf(request):
                 usuario_resultado = [usuario]  # Convertir en lista de un solo elemento
             except Usuarios.DoesNotExist:
                 usuario_resultado = []
-                messages.error(request, "No se encontró ningún usuario con esa cédula.")
     else:
             usuario_resultado = []
-            messages.error(request, "La cédula ingresada no es válida.")
+            # messages.error(request, "La cédula ingresada no es válida.")
+    
+    fecha_emision = datetime.now().strftime('%d/%m/%Y')
+    
+     # Generar la ruta estática absoluta para el logo (usando el sistema estático de Django)
+    logo_path = os.path.join(settings.BASE_DIR, 'aplicaciones/Registro_Usuarios/static/img/Logo.png')
+
+    # Generar URL absoluta para la imagen en el PDF
+    logo_url = request.build_absolute_uri(static('img/Logo.png'))
+
 
     if usuario_resultado:
         
         # Renderizar la plantilla como HTML
         html_string = render_to_string('reciboImprimir.html', {
+            'logo_path': logo_path,
+            'logo_url': logo_url,
             'usuario_resultado': usuario_resultado,
             'tiendas': tiendas,
             'total_general_peso': total_general_peso,
             'total_flete': total_flete,
             'total_isd': total_isd,
             'total_final': total_final,
+            'fecha_emision': fecha_emision
         })
 
         # Crear un objeto de BytesIO

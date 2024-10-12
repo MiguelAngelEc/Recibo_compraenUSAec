@@ -11,6 +11,6 @@ class TiendaForm(forms.ModelForm):
             'tkr': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'TKR'}),
             'peso_l': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Peso (l)', 'step': '0.01'}),
             'valor_peso': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Valor/Peso', 'step': '0.01'}),
-            'flete': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Flete', 'step': '0.01'}),
+            'flete': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Otros Valores', 'step': '0.01'}),
             'ISD': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'ISD', 'step': '0.01'})
         }

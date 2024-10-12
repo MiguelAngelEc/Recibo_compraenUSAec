@@ -3,72 +3,59 @@
 {% block body %}
 
 <!-- Formulario para Ingresar los valores -->
-<div class="recibo-container">
-    <h3 class="text-center">RECIBO</h3>
-    {% if form %}
-    <p>El formulario se está cargando correctamente.</p>
-    {% else %}
-    <p>Error: No se está cargando el formulario.</p>
-    {% endif %}
-    <div class="d-flex justify-content-center">
-        <form method="POST" class="w-100">
-            {% csrf_token %}
-            <div class="row">
-                {% for field in form %}
-                    <div class="col-md-2 mb-2"> <!-- Cambia a col-md-3 para 4 columnas -->
-                        <div class="form-group">
-                            {{ field }} <!-- Muestra el campo del formulario -->
-                            {% if field.help_text %}
-                                <small class="form-text text-muted">{{ field.help_text }}</small> <!-- Texto de ayuda -->
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-            <div class="text-center mt-3">
-                <form method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary" name="submit_tienda" value="submit_tienda">Enviar</button>
-                </form>
-            </div>
-        </form>
-    </div>
-      
-    <!-- Formulario para eliminar todos los registros -->
-    <div class="text-center mt-3">
-        <form method="POST" action="{% url 'eliminar_todos_los_registros' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger" name="submit_eliminar_todos" value="submit_eliminar_todos">Limpiar Registros</button>
-            <a href="{% url 'facturaUsuarios' %}"></a>            
-        </form>
-        <!-- Formulario para generar PDF -->
-        {% if usuario_resultado %}
-        <form method="POST" action="{% url 'factura_pdf' %}" target="_blank">
-            {% csrf_token %}
-            <input type="hidden" name="cedula" value="{{ usuario_resultado.cedula }}">
-            <button type="submit" class="btn btn-primary" name="generar_pdf" value="{{ usuario_resultado.cedula }}">Generar PDF</button>
-        </form>
+<div class="container d-flex col-12 my-4 p-4 border rounded shadow-sm">
+    <div class="container col-8">
+            {% if form %}
+        <p class="text-success">El formulario se está cargando correctamente.</p>
+        {% else %}
+        <p class="text-danger">Error: No se está cargando el formulario.</p>
         {% endif %}
-        
-    </div>
-    <form class="form-control col-2" method="POST" action="{% url 'factura_pdf' %}">
-        {% csrf_token %}
-        <input type="hidden" id="cedula" name="cedula" value="{{ request.POST.cedula|default:'' }}">
-        <button type="submit" class="btn bg-black text-white">Buscar y Generar PDF</button>
-    </form>
-    <div class="recibo-container">
-        <div class="col-5 mb-3">
-            <form class="form-control col-2" method="POST" action="{% url 'facturaUsuarios' %}">
+        <div class="d-flex justify-content-center">
+            <form method="POST" class="w-100">
                 {% csrf_token %}
-                <label for="cedula">Ingrese el número de cédula:</label>
-                <input type="text" id="cedula" name="cedula" value="{{ request.POST.cedula|default:'' }}" required>
-                <button type="submit" class="btn bg-black text-white" name="submit_buscar" value="submit_buscar">Buscar</button>
+                <div class="row">
+                    {% for field in form %}
+                        <div class="col-md-3 mb-3"> <!-- Cambia a col-md-3 para 4 columnas -->
+                            <div class="form-group">
+                                {{ field }} <!-- Muestra el campo del formulario -->
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small> <!-- Texto de ayuda -->
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div> 
+                <button type="submit" class="btn btn-primary" name="submit_tienda" value="submit_tienda">Enviar</button>          
+            </form>
+    </div>
+    <div class="col-md-4">
+        <form class="mt-4 align-items-center" method="POST" action="{% url 'facturaUsuarios' %}">
+            {% csrf_token %}
+            <!-- Input para la cédula -->
+            <input type="text" id="cedula" name="cedula" class="form-control mb-3 mr-3" value="{{ request.POST.cedula|default:'' }}" placeholder="Número Cliente" required>
+            <!-- Botón de Buscar -->
+            <button type="submit" class="btn bg-black text-white" name="submit_buscar" value="submit_buscar">Buscar</button>
+        </form>
+    </div>
+    </div>
+    <div class="col-12 mb-5">
+        <div class="col-md-3">
+            <form method="POST" action="{% url 'eliminar_todos_los_registros' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger mt-4" name="submit_eliminar_todos" value="submit_eliminar_todos">Limpiar Registros</button>
+            </form>
+        </div>
+        <div class="col-md-3">
+            <form method="POST" action="{% url 'factura_pdf' %}" target="_blank">
+                {% csrf_token %}
+                <input class="input-custom" type="hidden" id="cedula" name="cedula" value="{{ request.POST.cedula|default:'' }}">
+                <button type="submit" class="btn bg-black text-white mt-4">Generar PDF</button>
             </form>
         </div>
     </div>
-    <div class="recibo-container">
-        {% include 'reciboImprimir.html' %}
-    </div>
+</div>
+<div class="recibo-container">
+    {% include 'reciboImprimir.html' %}
 </div>
 
 

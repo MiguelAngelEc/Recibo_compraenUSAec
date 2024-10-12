@@ -1,4 +1,4 @@
-
+{% load static %}
 {% block body %}
 <!-- Tabla que mostrará los datos del usuario encontrado -->
 <style>
@@ -6,64 +6,66 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    font-size: 14px;
+    font-size: 12px;
     background-color: #f5f5f5;
 }
 
+.sec-logo{
+    display: flex;
+    display: none;
+} 
+span{
+    color: chocolate;
+}
+.header-logo{
+    width: 50%;
+    margin-top: 25px;
+}
+.img-img, .img-logo{
+    width: 550px;
+    height: 250px;
+}
 .container1 {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    padding: 20px;
-    gap: 150px;
-}
-
-.container1.user-info {
-    font-size: 14px; /* Tamaño de fuente para pantalla */
-    line-height: 1.4;
-    margin-bottom: 20px;
-    gap: 150px;
+    gap: 100px;
+    margin-top: 20px;
+    background-color: #ffffff;
 }
 
 .user-details, .company-info {
     flex: 1;
-    margin: 10px;
-    padding: 20px;
+    padding: 5px;
+    border-radius: 8px;
+    min-width: 200px;
 }
 
 .header {
-    background-color: black;
+    background-color: #000;
     color: white;
-
-    border-top-left-radius: 10px;
-    padding: 10px;
+    padding: 5px;
+    border-top-left-radius: 8px;
+    text-align: center;
 }
 
 .user-table, .company-details {
     border: 1px solid #000;
+    padding: 2px;
+    border-bottom-left-radius: 8px;
     border-top: none;
-    padding: 5px;
-    border-bottom-right-radius:10px;
-}
-
-.user-list {
-    padding: 5px;
-    display: flex;
-    flex-direction: column;
-    max-height: 300px;
-    overflow-y: auto;
 }
 
 .user-item {
     display: block;
     justify-content: space-between;
+    padding: 5px;
     border-bottom: 1px solid #e0e0e0;
 }
 
-.company-details {
-    font-size: 12px;
-    line-height: 1.4;
+.user-item-datos{
+    padding: 1px;
 }
-
 .company-list {
     list-style-type: none;
     padding: 0;
@@ -77,6 +79,10 @@ body {
 
 .recibo-container {
     margin-top: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
 
 .table-responsive {
@@ -87,7 +93,6 @@ body {
 .table {
     width: 100%;
     border-collapse: collapse;
-    border: 1px solid #000;
 }
 
 .table-header {
@@ -101,123 +106,161 @@ body {
 }
 
 .summary-table {
-    width: 50%;
-    margin-top: 75px;
-    margin-left: auto;
-    margin-right: 0;
-    padding: 10px;
+    width: 25%;
+    margin-top: 10px;
+}
+
+.summary-table td {
+    font-size: 12px;
+    padding: 8px;
+    border-top: 1px solid #000;
 }
 
 .align-right {
     text-align: right;
 }
 
-/* Estilos específicos para impresión */
+.container2 {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.info-bl {
+    display: none;
+}
+/* Estilos para impresión */
 @media print {
     @page {
         size: A4;
-        margin: 20mm; /* Márgenes para la hoja A4 */
+        margin: 20mm;
     }
 
     body {
-        font-size: 10px; /* Reducir el tamaño de la fuente en impresión */
-        background-color: white; /* Fondo blanco para impresión */
+        font-size: 10px;
+        background-color: white;
     }
-
-    .container1.user-info {
-        font-size: 10px; /* Fuente más pequeña para impresión */
-        line-height: 1.2; /* Espaciado reducido en impresión */
-    }
-
-    .user-details, .company-info {
+    .sec-logo{
+    display: flex;
+}
+    .img-img, .img-logo{
+    width: 325px;
+    height: 85px;
+}
+    .container1, .recibo-container {
+        padding: 0;
         margin: 0;
-        padding: 10px;
+        border: none;
+        background-color: white;
+    }
+
+    .user-details{
+        padding: 15px 20px 15px 0px;
+
+    }
+    .company-info{
+        padding: 15px 0px 15px 20px;
     }
     .header {
-    padding: 1px;
-}
-    .user-table, .company-details {
-        border: 1px solid #000;
-        padding: 0; /* Sin padding extra para imprimir */
+        padding: 0.2px;
+        text-align: center;
+        font-size: 12px;
     }
 
-    .user-list {
-        max-height: none; /* No limitar la altura en impresión */
-        overflow: visible; /* Sin scroll en impresión */
+    .table-cell{
+        text-align: end;
     }
-
-    .company-details {
-        font-size: 9px; /* Fuente aún más pequeña en impresión */
+    .table-cell, .summary-table td {
+        padding: 4px;
     }
 
     .summary-table {
-        width: 100%; /* Usar todo el ancho en impresión */
-        margin-top: 30px;
-        padding: 5px;
+        width: 25%;
     }
 
-    .table-cell {
-        padding: 5px; /* Menos espacio en las celdas para impresión */
+    .container2 {
+        flex-direction: column;
+    }
+
+    .info-bl {
+        padding: 10px;
+    }
+
+    .summary-table td {
+        border-top: none;
+    }
+    .info-bl {
+    display: block;
     }
 }
 </style>
 
-<div class="container1 user-info">
-    
-    <div class="user-details">
-        <div class="header">
+<div class="logo">
+    <section class="sec-logo">
+        <header class="header-logo">
+            <h2>Compraen<span>USA</span>ec</h2>
+            <h5>www.compraenusaec.com</h5>
+            <p>@compraenusaec</p>
+        </header>
+        <header class="img-img">
+                <img src="{{ logo_url }}" alt="Logo de la Empresa" class="img-logo">
+        </header>
+    </section>
+</div>
+<div class="container1">
+   
+    <section class="user-details">
+        <header class="header">
             <h5>Clientes</h5>
-        </div>
-        <div class="user-table">
+        </header>
+        <article class="user-table">
             {% if usuario_resultado %}
                 {% for usuario in usuario_resultado %}
                     <div class="user-item">
-                        <div>{{ usuario.nombre }}</div>
-                        <div>{{ usuario.ciudad }}</div>
-                        <div>{{ usuario.email }}</div>
-                        <div>{{ usuario.telefono }}</div>
+                        <div class="user-item-datos">{{ usuario.nombre }}</div>
+                        <div class="user-item-datos">{{ usuario.ciudad }}</div>
+                        <div class="user-item-datos">{{ usuario.email }}</div>
+                        <div class="user-item-datos">{{ usuario.telefono }}</div>
                     </div>
                 {% endfor %}
             {% else %}
-                <div class="no-user">
-                    No se encontraron usuarios con esta cédula
-                </div>
+                <div>No se encontraron usuarios con esta cédula</div>
             {% endif %}
-        </div>
-    </div>
-    <div class="company-info">
-        <div class="header">
+        </article>
+    </section>
+    
+    <section class="company-info">
+        <header class="header">
             <h5>CompraenUSAec</h5>
-        </div>
-        <div class="company-details">
+        </header>
+        <article class="company-details">
             <ul class="company-list">
                 <li class="company-item">PEDRO MONCAYO 6-54 Y OLMEDO</li>
                 <li class="company-item">Ibarra-Imbabura</li>
                 <li class="company-item"><strong>Código postal:</strong> 100102</li>
                 <li class="company-item"><strong>Teléfono:</strong> (+593) 0969090395</li>
             </ul>
-        </div>
-    </div>
+        </article>
+    </section>
 </div>
 
-<!-- Tabla que muestra los valores -->
 <div class="recibo-container">
     <h3 class="text-center">Comprobante</h3>
     <div class="table-responsive">
         <table class="table">
             <thead class="table-header">
-                <tr>
+                <tr>s
                     <th class="table-cell">Tienda</th>
                     <th class="table-cell">WR</th>
                     <th class="table-cell">TKR</th>
-                    <th class="table-cell">Peso (l)</th>
+                    <th class="table-cell">Peso Libra</th>
                     <th class="table-cell">Valor/Peso</th>
-                    <th class="table-cell">Total/Flete</th>
+                    <th class="table-cell">Total</th>
                 </tr>
             </thead>
             <tbody>
                 {% for tienda in tiendas %}
-                <tr class="table-row">
+                <tr>
                     <td class="table-cell">{{ tienda.titulo }}</td>
                     <td class="table-cell">{{ tienda.wr }}</td>
                     <td class="table-cell">{{ tienda.tkr }}</td>
@@ -228,14 +271,26 @@ body {
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+
+    <div class="container2">
+        <div class="info-bl">
+            <p><strong>El tiempo de entrega comenzará a contarse a partir del momento en que los productos lleguen a nuestra bodega en Miami.</strong> Este documento es solo un <strong>recibo</strong> y no tiene la validez de una factura oficial.</p>
+            {% if fecha_emision %}
+            <p>Fecha de emisión: <strong>{{ fecha_emision }}</strong></p>
+            {% else %}
+            <p style="color: red;">La fecha de emisión no está disponible</p>
+            {% endif %}
+            <h2>¡Gracias por su confianza!</h2>
+        </div>
 
         <table class="summary-table">
             <tr>
-                <td><strong>Total Peso:</strong></td>
+                <td><strong>Total Flete:</strong></td>
                 <td class="align-right">{{ total_general_peso }}</td>
             </tr>
             <tr>
-                <td><strong>Flete:</strong></td>
+                <td><strong>Otros Valores:</strong></td>
                 <td class="align-right">{{ total_flete }}</td>
             </tr>
             <tr>

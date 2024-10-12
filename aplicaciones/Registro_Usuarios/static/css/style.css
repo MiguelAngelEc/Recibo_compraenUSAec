@@ -8,3 +8,13 @@ img{
     margin: 0 auto; /* Centra el contenido si es necesario */
     padding: 20px; /* Ajusta el espacio alrededor del contenido */
 }
+.input-custom {
+    /* Elimina estilos específicos que Bootstrap podría aplicar */
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+}
+
+
