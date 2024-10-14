@@ -206,11 +206,11 @@ def factura_pdf(request):
     
     fecha_emision = datetime.now().strftime('%d/%m/%Y')
     
+    
      # Generar la ruta estática absoluta para el logo (usando el sistema estático de Django)
     logo_path = os.path.join(settings.BASE_DIR, 'aplicaciones/Registro_Usuarios/static/img/Logo.png')
-
     # Generar URL absoluta para la imagen en el PDF
-    logo_url = request.build_absolute_uri(static('img/Logo.png'))
+    logo_url = static('img/Logo.png')
 
 
     if usuario_resultado:
