@@ -237,7 +237,7 @@ def factura_pdf(request):
         # Devolver el PDF como respuesta HTTP
         pdf_file.seek(0)
         response = HttpResponse(pdf_file, content_type='application/pdf')
-        response['Content-Disposition'] = 'inline; filename="factura.pdf"'
+        response['Content-Disposition'] = 'attachment; filename="factura.pdf"'
 
         return response
     else:
