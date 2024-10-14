@@ -214,8 +214,8 @@ def factura_pdf(request):
     if not os.path.exists(logo_path):
         return HttpResponse("El logo no existe.", status=404)
 
-    # Generar URL absoluta para la imagen en el PDF
-    logo_url = request.build_absolute_uri(static('img/Logo.png'))
+    # Implementar directamente la URL del servidor para el logo
+    logo_url = "https://recibo-compraenusaec.onrender.com/static/img/Logo.png"  # URL del servidor
     print(logo_url)
 
     if usuario_resultado:
