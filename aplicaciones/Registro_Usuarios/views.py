@@ -207,23 +207,23 @@ def factura_pdf(request):
     fecha_emision = datetime.now().strftime('%d/%m/%Y')
     
     
-    # Ruta absoluta del logo
-    logo_path = os.path.join(settings.BASE_DIR, 'aplicaciones/Registro_Usuarios/static/img/Logo.png')
+    # # Ruta absoluta del logo
+    # logo_path = os.path.join(settings.BASE_DIR, 'aplicaciones/Registro_Usuarios/static/img/Logo.png')
 
-    # Verificar si el archivo del logo existe
-    if not os.path.exists(logo_path):
-        return HttpResponse("El logo no existe.", status=404)
+    # # Verificar si el archivo del logo existe
+    # if not os.path.exists(logo_path):
+    #     return HttpResponse("El logo no existe.", status=404)
 
-    # Implementar directamente la URL del servidor para el logo
-    logo_url = "https://recibo-compraenusaec.onrender.com/static/img/Logo.png"  # URL del servidor
-    print(logo_url)
+    # # Implementar directamente la URL del servidor para el logo
+    # logo_url = "https://recibo-compraenusaec.onrender.com/static/img/Logo.png"  # URL del servidor
+    # print(logo_url)
 
     if usuario_resultado:
         
         # Renderizar la plantilla como HTML
         html_string = render_to_string('reciboImprimir.html', {
-            'logo_path': logo_path,
-            'logo_url': logo_url,
+            # 'logo_path': logo_path,
+            # 'logo_url': logo_url,
             'usuario_resultado': usuario_resultado,
             'tiendas': tiendas,
             'total_general_peso': total_general_peso,
