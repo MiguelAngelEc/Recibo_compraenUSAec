@@ -207,11 +207,16 @@ def factura_pdf(request):
     fecha_emision = datetime.now().strftime('%d/%m/%Y')
     
     
+    # Ruta absoluta del logo
     logo_path = os.path.join(settings.BASE_DIR, 'aplicaciones/Registro_Usuarios/static/img/Logo.png')
+
+    # Verificar si el archivo del logo existe
+    if not os.path.exists(logo_path):
+        return HttpResponse("El logo no existe.", status=404)
 
     # Generar URL absoluta para la imagen en el PDF
     logo_url = request.build_absolute_uri(static('img/Logo.png'))
-
+    print(logo_url)
 
     if usuario_resultado:
         
