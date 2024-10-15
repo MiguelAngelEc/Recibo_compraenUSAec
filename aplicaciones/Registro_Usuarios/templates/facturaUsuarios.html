@@ -17,6 +17,7 @@
                     {% for field in form %}
                         <div class="col-md-3 mb-3"> <!-- Cambia a col-md-3 para 4 columnas -->
                             <div class="form-group">
+                                {{ placeholder }}
                                 {{ field }} <!-- Muestra el campo del formulario -->
                                 {% if field.help_text %}
                                     <small class="form-text text-muted">{{ field.help_text }}</small> <!-- Texto de ayuda -->
