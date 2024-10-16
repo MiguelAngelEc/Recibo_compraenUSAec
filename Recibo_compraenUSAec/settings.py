@@ -127,11 +127,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Si tienes más carpetas de archivos estáticos, añádelas aquí
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # Aquí apunta a la carpeta donde está tu logo
-]
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
