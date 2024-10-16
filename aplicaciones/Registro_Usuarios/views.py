@@ -106,6 +106,7 @@ def facturaUsuarios(request):
     for tienda in tiendas:
         tienda.titulo = tienda.titulo if tienda.titulo else 'S/D'
         tienda.wr = tienda.wr if tienda.wr else 'S/D'
+        tienda.tkr = tienda.tkr if tienda.tkr else 'S/D'
         tienda.peso_l = tienda.peso_l if tienda.peso_l is not None else Decimal('0.0')
         tienda.valor_peso = tienda.valor_peso if tienda.valor_peso is not None else Decimal('0.0')
         tienda.total_peso = tienda.total_peso if tienda.total_peso is not None else Decimal('0.0')
@@ -177,6 +178,7 @@ def factura_pdf(request):
     for tienda in tiendas:
         tienda.titulo = tienda.titulo if tienda.titulo else 'S/D'
         tienda.wr = tienda.wr if tienda.wr else 'S/D'
+        tienda.tkr= tienda.tkr if tienda.tkr else 'S/D'
         tienda.peso_l = tienda.peso_l if tienda.peso_l is not None else Decimal('0.0')
         tienda.valor_peso = tienda.valor_peso if tienda.valor_peso is not None else Decimal('0.0')
         tienda.total_peso = tienda.total_peso if tienda.total_peso is not None else Decimal('0.0')
