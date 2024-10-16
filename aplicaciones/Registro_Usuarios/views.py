@@ -208,7 +208,10 @@ def factura_pdf(request):
     
     
     # Ruta absoluta del logo
-    logo_path = os.path.join(settings.BASE_DIR, 'aplicaciones/Registro_Usuarios/static/img/Logo.png')
+    try:
+        logo_path = os.path.join(settings.BASE_DIR, 'aplicaciones/Registro_Usuarios/static/img/Logo.png')
+    except Exception as e:
+        logging.error('Error al Generar el PDF: %s',e)
 
     # Generar URL absoluta para la imagen en el PDF
     logo_url = request.build_absolute_uri(static('img/Logo.png'))
