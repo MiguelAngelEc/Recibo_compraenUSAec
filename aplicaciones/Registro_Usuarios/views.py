@@ -218,13 +218,13 @@ def factura_pdf(request):
     # Generar URL absoluta para la imagen en el PDF
     logo_url = request.build_absolute_uri(static('img/Logo.png'))
 
+    assets = {'logo_url': logo_url}
 
     if usuario_resultado:
         
         # Renderizar la plantilla como HTML
         html_string = render_to_string('reciboImprimir.html', {
-            'logo_path': logo_path,
-            'logo_url': logo_url,
+            'assets': assets,
             'usuario_resultado': usuario_resultado,
             'tiendas': tiendas,
             'total_general_peso': total_general_peso,
